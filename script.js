@@ -6,18 +6,21 @@
 const cells = document.querySelectorAll(".cell")
 const status = document.getElementById("status")
 const restartBtn = document.getElementById("restart")
+const catScoreDisplay = document.getElementById("catScore")
+const dogScoreDisplay = document.getElementById("dogScore")
 
 let state = createInitialState()
+let scores = { X: 0, O: 0 } // Track wins for each player
 
-/**
- * Maps internal game symbols to display emojis.
- * @param {'X'|'O'|''} symbol
- * @returns {string}
- */
 function getDisplaySymbol(symbol) {
     if (symbol === "X") return "😺"
     if (symbol === "O") return "🐶"
     return ""
+}
+
+function updateScoreDisplay() {
+    catScoreDisplay.textContent = scores.X
+    dogScoreDisplay.textContent = scores.O
 }
 
 function render() {
@@ -52,6 +55,8 @@ function handleClick(e) {
         state.gameOver = true
         if (result.winner) {
             result.combo.forEach((i) => cells[i].classList.add("winning"))
+            scores[result.winner]++
+            updateScoreDisplay()
             setStatus(`Player ${getDisplaySymbol(result.winner)} wins!`, "win")
         } else {
             setStatus("It's a draw!", "draw")
@@ -75,5 +80,6 @@ cells.forEach((cell) => cell.addEventListener("click", handleClick))
 restartBtn.addEventListener("click", restartGame)
 
 // Initial render
+updateScoreDisplay()
 render()
 setStatus(`Player ${getDisplaySymbol(state.current)}'s turn`)
